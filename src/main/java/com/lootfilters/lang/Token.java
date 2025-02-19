@@ -9,6 +9,7 @@ import java.awt.Color;
 
 @Value
 @RequiredArgsConstructor
+@ToString
 public class Token {
     public enum Type {
         WHITESPACE, NEWLINE,
@@ -28,12 +29,13 @@ public class Token {
         COMMENT,
     }
 
-    public static Token intLiteral(String value) { return new Token(Type.LITERAL_INT, value); }
-    public static Token stringLiteral(String value) { return new Token(Type.LITERAL_STRING, value); }
-    public static Token identifier(String value) { return new Token(Type.IDENTIFIER, value); }
+    public static Token intLiteral(String value, Location location) { return new Token(Type.LITERAL_INT, value, location); }
+    public static Token stringLiteral(String value, Location location) { return new Token(Type.LITERAL_STRING, value, location); }
+    public static Token identifier(String value, Location location) { return new Token(Type.IDENTIFIER, value, location); }
 
     Type type;
     String value;
+    Location location;
 
     public boolean is(Type type) {
         return this.type == type;
@@ -87,6 +89,6 @@ public class Token {
         var str = "Token{type=" + type;
         return value != null && value.isEmpty()
                 ? str + "}"
-                : str + ",value=" + value + "}";
+                : str + ",value=" + value + ", location=" + location.toString() + "}";
     }
 }

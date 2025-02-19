@@ -32,7 +32,7 @@ public class Preprocessor {
                 preproc.add(next);
                 if (!next.is(Token.Type.NEWLINE)) {
                     preproc.addAll(tokens.takeLine());
-                    preproc.add(new Token(Token.Type.NEWLINE, "\n"));
+                    preproc.add(new Token(Token.Type.NEWLINE, "\n", Location.UNKNOWN));
                 }
             }
         }
@@ -44,11 +44,12 @@ public class Preprocessor {
     }
 
     private void parseDefine() {
-        var name = tokens.takeExpect(Token.Type.IDENTIFIER).getValue();
+        var nameToken = tokens.takeExpect(Token.Type.IDENTIFIER);
+        var name = nameToken.getValue();
         var params = tokens.peek().is(Token.Type.EXPR_START)
                 ? parseDefineParams() : null;
         if (params != null && params.isEmpty()) {
-            throw new PreprocessException("#define " + quote(name) + " has empty param list");
+            throw new PreprocessException("#define " + quote(name) + " has empty param list found at " + nameToken.getLocation().toString());
         }
         tokens.takeExpect(Token.Type.WHITESPACE, true);
         defines.put(name, new Define(name, params, tokens.takeLine()));
